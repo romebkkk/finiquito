@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Finiquito · Calcula tu finiquito e indemnización por despido</title>
+<meta name="description" content="Calculadora gratuita de finiquito e indemnización por despido en España (improcedente, objetivo, fin de contrato): vacaciones, pagas extra y tramos de la reforma de 2012.">
+<link rel="stylesheet" href="style.css"><style>:root{--accent:#34d399}</style></head><body><div class="wrap">
+<header><div class="logo">📄 <b>Finiquito</b></div><p>Comprueba si lo que te ofrecen al terminar tu contrato es correcto <strong>antes de firmar</strong>.</p>
+<span class="tag">Estatuto de los Trabajadores · gratis · privado</span></header>
+<div class="card">
+ <div class="g2"><div><label>Fecha de inicio del contrato</label><input id="ini" type="date" value="2018-03-01"></div><div><label>Fecha de fin / despido</label><input id="fin" type="date"></div>
+  <div><label>Salario bruto anual (€, con pagas extra)</label><input id="sal" type="number" value="24000"></div>
+  <div><label>Motivo</label><select id="tipo"><option value="improcedente">Despido improcedente (33 días/año)</option><option value="objetivo">Despido objetivo / procedente (20 días/año)</option><option value="fin_temporal">Fin de contrato temporal (12 días/año)</option><option value="voluntaria">Baja voluntaria (sin indemnización)</option></select></div>
+  <div><label>Días de vacaciones no disfrutados</label><input id="vac" type="number" value="0" min="0"></div>
+  <div><label>Número de pagas</label><select id="pagas"><option value="14">14 pagas</option><option value="12">12 pagas (prorrateadas)</option></select></div></div>
+ <label class="chk"><input type="checkbox" id="pro">Ya cobro las pagas extra prorrateadas en la nómina</label>
+ <button class="btn" id="calc">Calcular</button><div id="res"></div></div>
+<div class="note">⚠️ Orientativo. Los convenios colectivos pueden mejorar estas cantidades. Si no estás de acuerdo, puedes firmar "no conforme" y consultar con un abogado laboralista o tu sindicato: tienes 20 días hábiles para impugnar un despido.</div>
+<footer>Código abierto · <a href="https://github.com/romebkkk/finiquito" target="_blank">GitHub</a> · Hecho con ❤️ por <a href="https://dataflowelegance.es" target="_blank">DataFlow Elegance</a></footer></div>
+<script src="finiquito.js"></script><script>
+var $=function(s){return document.querySelector(s)};$("#fin").value=new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10);
+function eur(x){return x.toLocaleString("es-ES",{style:"currency",currency:"EUR"})}
+$("#calc").onclick=function(){var r=Finiquito.calcular({inicio:$("#ini").value,fin:$("#fin").value,salarioAnual:$("#sal").value,tipo:$("#tipo").value,vacacionesPendientes:$("#vac").value,numPagas:$("#pagas").value,pagasProrrateadas:$("#pro").checked});
+ if(r.error){$("#res").innerHTML='<p class="bad">'+r.error+'</p>';return}
+ $("#res").innerHTML='<div class="card"><small style="color:var(--mut)">Total estimado (indemnización + finiquito)</small><div class="big">'+eur(r.total)+'</div>'+
+ '<div class="stats"><div class="stat"><b>'+eur(r.indemnizacion)+'</b><small>Indemnización ('+r.dias_indemnizacion+' días)</small></div><div class="stat"><b>'+eur(r.finiquito.total)+'</b><small>Finiquito</small></div><div class="stat"><b>'+r.meses_servicio+'</b><small>meses trabajados</small></div></div>'+
+ '<table><tr><th>Concepto</th><th>Importe</th></tr><tr><td>Salario de los días trabajados del último mes</td><td>'+eur(r.finiquito.salario_mes)+'</td></tr><tr><td>Vacaciones no disfrutadas</td><td>'+eur(r.finiquito.vacaciones)+'</td></tr><tr><td>Parte proporcional de paga extra</td><td>'+eur(r.finiquito.paga_extra_prorrata)+'</td></tr><tr><td>Indemnización</td><td>'+eur(r.indemnizacion)+'</td></tr></table>'+
+ '<p style="color:var(--mut);font-size:.9rem">'+r.nota_indemnizacion+' Salario diario: '+eur(r.salario_dia)+'. Importes brutos: la indemnización legal está exenta de IRPF; el finiquito tributa.</p></div>'};
+</script></body></html>
